@@ -7,8 +7,7 @@ import { Chooser, Dir, Maze, Node } from '../lib';
 })
 export class GameStateService {
   // This is NOT a secure seed -- but does it matter? I think not.
-  private chooserSeed = makeInsecureSeed();
-  private chooser = new Chooser(this.chooserSeed);
+  private chooser = new Chooser(makeInsecureSeed());
 
   private mazeInternal!: Maze;
 
@@ -18,7 +17,6 @@ export class GameStateService {
 
   reset(size: number, seed?: number): void {
     seed = seed ?? makeInsecureSeed();
-    this.chooserSeed = seed;
     this.chooser = new Chooser(seed);
     this.mazeInternal = new Maze(size, this.chooser);
     this.position.set(this.maze.start);
@@ -26,7 +24,7 @@ export class GameStateService {
   }
 
   getShareUrl(): string {
-    return `${window.location.origin}/?seed=${this.chooserSeed}`;
+    return `${window.location.origin}/?seed=${this.chooser.seed}`;
   }
 
   get maze(): Maze {
