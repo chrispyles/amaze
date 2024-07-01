@@ -1,6 +1,7 @@
 import { Chooser } from './chooser';
 import { Maze } from './maze';
-import { Coordinates, Node } from './node';
+import { Node } from './node';
+import { Coordinates } from './shared';
 
 describe('Maze', () => {
   let chooser: Chooser;
@@ -11,8 +12,40 @@ describe('Maze', () => {
     maze = makeMaze(chooser);
   });
 
+  describe('constructor', () => {
+    it('should populate nodes', () => {});
+
+    it('should set the start node', () => {});
+
+    it('should set the end node', () => {});
+
+    it('should populate the neighbors of each node', () => {});
+  });
+
+  describe('fromNodes()', () => {
+    it('should correctly populate nodes', () => {});
+
+    it('should set the start node', () => {});
+
+    it('should set the end node', () => {});
+
+    it('should throw an error if nodes and size are incompatible', () => {});
+
+    it('should throw an error if the start node is not in nodes', () => {});
+
+    it('should throw an error if the end node is not in nodes', () => {});
+  });
+
+  describe('getNode()', () => {
+    it('should return the node with the provided coordinates', () => {});
+  });
+
+  describe('toArray()', () => {
+    it('should return correct the 2D node array', () => {});
+  });
+
   describe('solve()', () => {
-    it('returns the path through the maze', () => {
+    it('should return the path through the maze', () => {
       const want = [
         maze.getNode([0, 0]),
         maze.getNode([1, 0]),
