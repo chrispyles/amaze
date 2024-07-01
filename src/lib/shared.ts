@@ -8,3 +8,6 @@ export enum Dir {
 
 /** All elements of {@link Dir}, in order. */
 export const ALL_DIRS: readonly Dir[] = [Dir.U, Dir.R, Dir.D, Dir.L];
+
+/** The coordinates of a node (indices into a 2D array). */
+export type Coordinates = [number, number];

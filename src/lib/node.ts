@@ -1,11 +1,8 @@
 import { cache } from 'decorator-cache-getter';
 import { corrupt } from 'exhaustive';
 
-import { ALL_DIRS, Dir } from './shared';
 import { type Chooser } from './chooser';
-
-/** The coordinates of a node (indices into a 2D array). */
-export type Coordinates = [number, number];
+import { ALL_DIRS, Coordinates, Dir } from './shared';
 
 /** A node in a maze graph. */
 export class Node {

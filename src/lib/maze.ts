@@ -1,8 +1,8 @@
 import { cache } from 'decorator-cache-getter';
 
 import { Chooser } from './chooser';
-import { Coordinates, Node } from './node';
-import { ALL_DIRS, Dir } from './shared';
+import { Node } from './node';
+import { ALL_DIRS, Coordinates, Dir } from './shared';
 import { corrupt } from 'exhaustive';
 
 /** A maze, represented as a undirected tree of {@link Node}s. */
