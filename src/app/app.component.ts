@@ -39,6 +39,11 @@ export class AppComponent implements OnInit {
     this.generateNewMaze(seed);
   }
 
+  /** The color to use for the logo in the header. */
+  get logoColor() {
+    return this.darkModeEnabled ? 'white' : 'black';
+  }
+
   /** The game's maze. */
   get maze(): Maze {
     return this.gameStateService.maze;
@@ -49,11 +54,14 @@ export class AppComponent implements OnInit {
     this.gameStateService.reset(this.size, seed);
   }
 
+  /** Whether dark mode is currently enabled. */
+  get darkModeEnabled(): boolean {
+    return document.body.classList.contains(DARK_MODE_CLASS);
+  }
+
   /** The icon to use in the toggle dark mode button. */
   get themeModeIcon(): string {
-    return document.body.classList.contains(DARK_MODE_CLASS)
-      ? 'light_mode'
-      : 'dark_mode';
+    return this.darkModeEnabled ? 'light_mode' : 'dark_mode';
   }
 
   /** Toggles dark mode. */
