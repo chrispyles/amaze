@@ -1,0 +1,19 @@
+$header-padding: 1rem;
+
+:host {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+}
+
+header {
+  display: flex;
+  justify-content: flex-end;
+  padding: $header-padding;
+  position: absolute;
+  top: 0;
+  width: calc(100% - 2 * $header-padding);
+}

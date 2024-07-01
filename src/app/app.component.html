@@ -1,0 +1,27 @@
+<header>
+  <button
+    class="material-symbols icon-button"
+    title="Generate new maze"
+    (click)="generateNewMaze()"
+  >
+    refresh
+  </button>
+
+  <button
+    class="material-symbols icon-button"
+    title="Toggle light/dark mode"
+    (click)="toggleDarkMode()"
+  >
+    {{ themeModeIcon }}
+  </button>
+
+  <button
+    class="material-symbols icon-button"
+    title="Share maze"
+    (click)="shareMaze()"
+  >
+    share
+  </button>
+</header>
+
+<amaze-maze [maze]="maze" (move)="handleMove($event)" />
