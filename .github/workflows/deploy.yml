@@ -36,7 +36,7 @@ jobs:
         run: |
           npx ng deploy \
             --repo=https://${{ secrets.GH_TOKEN }}@github.com/chrispyles/amaze.git \
-            --base-href="/amaze/"
+            --base-href="/amaze/" \
             --silent
         env:
           CI: true
