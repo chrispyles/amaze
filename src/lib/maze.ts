@@ -1,6 +1,6 @@
 import { cache } from 'decorator-cache-getter';
 
-import { type Chooser } from './chooser';
+import { Chooser } from './chooser';
 import { Coordinates, Node } from './node';
 import { ALL_DIRS, Dir } from './shared';
 import { corrupt } from 'exhaustive';
@@ -10,22 +10,44 @@ export class Maze {
   /** The nodes in the tree, mapped to by {@link Node.key}. */
   readonly nodes = new Map<string, Node>();
 
-  /** The node that was randomly chosen to begin DFS with when initializing the maze. */
-  dfsStart!: Node;
-
   /** The starting node of the maze. */
   start!: Node;
 
   /** The ending node of the maze. */
   end!: Node;
 
-  private nodeArray?: readonly Node[][];
+  /**
+   * The cached representation of the maze as a 2D array of nodes, if it has been calculated yet.
+   */
+  private nodeArray?: ReadonlyArray<readonly Node[]>;
 
   constructor(
     readonly size: number,
     private readonly chooser: Chooser,
   ) {
     this.init();
+  }
+
+  /** Create a maze from the provided nodes. Should only be used for testing. */
+  static fromNodes(nodes: Node[], size: number, start: Node, end: Node): Maze {
+    if (nodes.length !== size * size) {
+      throw new Error(
+        `wrong number of nodes: want ${size * size}, got ${nodes.length}`,
+      );
+    }
+    if (!nodes.includes(start)) {
+      throw new Error('start node not in provided nodes array');
+    }
+    if (!nodes.includes(end)) {
+      throw new Error('end node not in provided nodes array');
+    }
+    const maze = new Maze(size, new Chooser(0));
+    maze.nodes.clear();
+    nodes.forEach((n) => maze.nodes.set(n.key, n));
+    maze.nodeArray = undefined;
+    maze.start = start;
+    maze.end = end;
+    return maze;
   }
 
   /** The possible coordinates of nodes in this maze, based on its size. */
@@ -46,7 +68,6 @@ export class Maze {
       this.size,
       this.chooser,
     );
-    this.dfsStart = node;
     this.nodes.set(node.key, node);
 
     let path: Node[] = [];
@@ -107,7 +128,7 @@ export class Maze {
   }
 
   /** Returns a the maze as a 2D array of nodes. */
-  toArray(): readonly Node[][] {
+  toArray(): ReadonlyArray<readonly Node[]> {
     if (this.nodeArray) return this.nodeArray;
 
     const arr: Node[][] = [];
@@ -122,5 +143,28 @@ export class Maze {
 
     this.nodeArray = arr;
     return arr;
+  }
+
+  /** Solves the maze and returns the path through it. */
+  solve(): Node[] {
+    return this.solveRecursive(this.start, new Set());
+  }
+
+  /** A recursive helper method for solving the maze using DFS. */
+  private solveRecursive(node: Node, visited: Set<string>): Node[] {
+    if (this.end.equals(node)) return [node];
+    const unvisitedNeighbors = node.neighbors.filter(
+      (n) => !visited.has(n.key),
+    );
+    if (unvisitedNeighbors.length === 0) return [];
+    visited.add(node.key);
+    for (const neighbor of unvisitedNeighbors) {
+      const maybePath = this.solveRecursive(neighbor, visited);
+      if (maybePath.length > 0) {
+        return [node, ...maybePath];
+      }
+    }
+    visited.delete(node.key);
+    return [];
   }
 }

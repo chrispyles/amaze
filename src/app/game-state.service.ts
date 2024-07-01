@@ -1,6 +1,8 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, Signal } from '@angular/core';
 
 import { Chooser, Dir, Maze, Node } from '../lib';
+
+const ANIMATION_FRAME_MS = 150;
 
 /** A service for managing the game state. */
 @Injectable({
@@ -14,18 +16,33 @@ export class GameStateService {
   private mazeInternal!: Maze;
 
   /** The node corresponding to the current position in the maze. */
-  readonly position = signal<Node>(new Node(0, 0, 0, this.chooser));
+  private readonly positionInternal = signal<Node>(
+    new Node(0, 0, 0, this.chooser),
+  );
 
   /** The path of nodes leading to the current position. */
-  readonly path = signal<Node[]>([]);
+  private readonly pathInternal = signal<readonly Node[]>([]);
+
+  /** Whether an animation is currently ongoing. */
+  inAnimation = false;
 
   /** Generate a new maze and reset the game state. */
   reset(size: number, seed?: number): void {
     seed = seed ?? makeInsecureSeed();
     this.chooser = new Chooser(seed);
     this.mazeInternal = new Maze(size, this.chooser);
-    this.position.set(this.maze.start);
-    this.path.set([this.maze.start]);
+    this.positionInternal.set(this.maze.start);
+    this.pathInternal.set([this.maze.start]);
+  }
+
+  /** The node corresponding to the current position in the maze. */
+  get position(): Signal<Node> {
+    return this.positionInternal;
+  }
+
+  /** The path of nodes leading to the current position. */
+  get path(): Signal<readonly Node[]> {
+    return this.pathInternal;
   }
 
   /** Returns a URL that includes query parameters to re-generate the current maze. */
@@ -47,15 +64,38 @@ export class GameStateService {
       console.log(`invalid movement: ${dir}`);
       return;
     }
-    const coords = this.position().getNeighborCoordinates(dir);
+    const coords = this.positionInternal().getNeighborCoordinates(dir);
     const newPos = this.maze.getNode(coords);
-    this.path.set([...this.path(), newPos]); // TODO: should this detect when the user moves back along the path
-    this.position.set(newPos);
+    this.pathInternal.set([...this.pathInternal(), newPos]); // TODO: should this detect when the user moves back along the path
+    this.positionInternal.set(newPos);
   }
 
   /** Returns whether a move in the specified direction is allowed. */
   private canMove(dir: Dir): boolean {
-    return !this.position().walls[dir];
+    return !this.positionInternal().walls[dir];
+  }
+
+  /** Solve the maze and update the state to reflect the solution. */
+  solve(animate?: boolean): void {
+    const path = this.maze.solve();
+    if (!animate) {
+      this.positionInternal.set(path.at(-1)!);
+      this.pathInternal.set(path);
+      return;
+    }
+    this.inAnimation = true;
+    let idx = 0;
+    const animateFrame = () => {
+      this.positionInternal.set(path[idx]);
+      this.pathInternal.set(path.slice(0, idx + 1));
+      if (idx++ < path.length - 1) {
+        setTimeout(animateFrame, ANIMATION_FRAME_MS);
+      } else {
+        this.inAnimation = false;
+      }
+    };
+    animateFrame();
+    // TODO: display the solved maze differently than the user's solution.
   }
 }
 

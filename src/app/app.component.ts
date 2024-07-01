@@ -55,8 +55,13 @@ export class AppComponent implements OnInit {
     return this.gameStateService.maze;
   }
 
+  /** Solves the maze and displays the solution. */
+  solveMaze(): void {
+    this.gameStateService.solve(true);
+  }
+
   /** Generate a new maze, optionally with the specified seed. */
-  generateNewMaze(seed?: number) {
+  generateNewMaze(seed?: number): void {
     this.gameStateService.reset(this.size, seed);
   }
 
@@ -71,12 +76,12 @@ export class AppComponent implements OnInit {
   }
 
   /** Toggles dark mode. */
-  toggleDarkMode() {
+  toggleDarkMode(): void {
     document.body.classList.toggle(DARK_MODE_CLASS);
   }
 
   /** Copies a URL to the current maze to the clipboard. */
-  shareMaze() {
+  shareMaze(): void {
     const url = this.gameStateService.getShareUrl();
     navigator.clipboard.writeText(url);
     alert('URL copied to clipboard'); // TODO: snackbar?
@@ -84,6 +89,7 @@ export class AppComponent implements OnInit {
 
   /** Handles a move by the user. */
   handleMove(dir: Dir): void {
+    if (this.gameStateService.inAnimation) return;
     this.gameStateService.move(dir);
   }
 }
