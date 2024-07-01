@@ -1,0 +1,42 @@
+name: Build and push to gh-pages
+
+on:
+  workflow_run:
+    workflows: ["Node.js CI"]
+    types: [completed]
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_dispatch }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.x
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Deploy to gh pages
+        run: |
+          npx ng deploy \
+            --repo=https://${{ secrets.GH_TOKEN }}@github.com/chrispyles/amaze.git \
+            --base-href="/amaze/"
+            --silent
+        env:
+          CI: true
