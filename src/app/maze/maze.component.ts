@@ -56,10 +56,7 @@ export class MazeComponent implements AfterViewInit, OnDestroy {
   /** Handle a keydown event to move the current position. */
   handleKeypress(evt: KeyboardEvent) {
     const arrowDir = keyToDir(evt.key);
-    if (arrowDir === undefined) {
-      console.log(`invalid keypress: ${evt.key}`);
-      return;
-    }
+    if (arrowDir === undefined) return;
     this.move.emit(arrowDir);
   }
 

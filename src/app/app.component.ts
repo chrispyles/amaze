@@ -57,6 +57,7 @@ export class AppComponent implements OnInit {
 
   /** Solves the maze and displays the solution. */
   solveMaze(): void {
+    if (this.gameStateService.inAnimation) return;
     this.gameStateService.solve(true);
   }
 

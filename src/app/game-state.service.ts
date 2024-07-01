@@ -26,6 +26,9 @@ export class GameStateService {
   /** Whether an animation is currently ongoing. */
   inAnimation = false;
 
+  /** Whether to abort the animation on its next frame. */
+  abortAnimation = false;
+
   /** Generate a new maze and reset the game state. */
   reset(size: number, seed?: number): void {
     seed = seed ?? makeInsecureSeed();
@@ -33,6 +36,7 @@ export class GameStateService {
     this.mazeInternal = new Maze(size, this.chooser);
     this.positionInternal.set(this.maze.start);
     this.pathInternal.set([this.maze.start]);
+    if (this.inAnimation) this.abortAnimation = true;
   }
 
   /** The node corresponding to the current position in the maze. */
@@ -60,10 +64,7 @@ export class GameStateService {
    * in that direction).
    */
   move(dir: Dir): void {
-    if (!this.canMove(dir)) {
-      console.log(`invalid movement: ${dir}`);
-      return;
-    }
+    if (!this.canMove(dir)) return;
     const coords = this.positionInternal().getNeighborCoordinates(dir);
     const newPos = this.maze.getNode(coords);
     this.pathInternal.set([...this.pathInternal(), newPos]); // TODO: should this detect when the user moves back along the path
@@ -86,6 +87,11 @@ export class GameStateService {
     this.inAnimation = true;
     let idx = 0;
     const animateFrame = () => {
+      if (this.abortAnimation) {
+        this.inAnimation = false;
+        this.abortAnimation = false;
+        return;
+      }
       this.positionInternal.set(path[idx]);
       this.pathInternal.set(path.slice(0, idx + 1));
       if (idx++ < path.length - 1) {
