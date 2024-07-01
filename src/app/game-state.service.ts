@@ -24,10 +24,10 @@ export class GameStateService {
   private readonly pathInternal = signal<readonly Node[]>([]);
 
   /** Whether an animation is currently ongoing. */
-  inAnimation = false;
+  private inAnimationInternal = false;
 
   /** Whether to abort the animation on its next frame. */
-  abortAnimation = false;
+  private abortAnimation = false;
 
   /** Generate a new maze and reset the game state. */
   reset(size: number, seed?: number): void {
@@ -47,6 +47,11 @@ export class GameStateService {
   /** The path of nodes leading to the current position. */
   get path(): Signal<readonly Node[]> {
     return this.pathInternal;
+  }
+
+  /** Whether an animation is currently ongoing. */
+  get inAnimation(): boolean {
+    return this.inAnimationInternal;
   }
 
   /** Returns a URL that includes query parameters to re-generate the current maze. */
@@ -84,11 +89,11 @@ export class GameStateService {
       this.pathInternal.set(path);
       return;
     }
-    this.inAnimation = true;
+    this.inAnimationInternal = true;
     let idx = 0;
     const animateFrame = () => {
       if (this.abortAnimation) {
-        this.inAnimation = false;
+        this.inAnimationInternal = false;
         this.abortAnimation = false;
         return;
       }
@@ -97,7 +102,7 @@ export class GameStateService {
       if (idx++ < path.length - 1) {
         setTimeout(animateFrame, ANIMATION_FRAME_MS);
       } else {
-        this.inAnimation = false;
+        this.inAnimationInternal = false;
       }
     };
     animateFrame();
