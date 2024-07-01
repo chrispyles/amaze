@@ -1,4 +1,10 @@
-import { Component, computed, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+} from '@angular/core';
 import { corrupt } from 'exhaustive';
 
 import { type Node, Dir, ALL_DIRS } from '../../lib';
@@ -18,6 +24,7 @@ import { GameStateService } from '../game-state.service';
     }
   `,
   styleUrl: './node.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class]': 'classes()',
     '[class.material-symbols]': 'true',

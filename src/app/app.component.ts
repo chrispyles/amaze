@@ -1,4 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  OnInit,
+} from '@angular/core';
 
 import { MazeComponent } from './maze/maze.component';
 import { GameStateService } from './game-state.service';
@@ -14,6 +19,7 @@ const DARK_MODE_CLASS = 'dark-mode';
   imports: [LogoComponent, MazeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
   readonly gameStateService = inject(GameStateService);

@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   inject,
@@ -18,6 +19,7 @@ import { Dir, Maze, type Node } from '../../lib';
   imports: [NodeComponent],
   templateUrl: './maze.component.html',
   styleUrl: './maze.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[attr.tabindex]': '0',
   },

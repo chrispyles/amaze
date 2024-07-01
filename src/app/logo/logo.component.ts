@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'amaze-logo',
@@ -301,6 +301,7 @@ import { Component, Input } from '@angular/core';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[style.height]': "sizePx + 'px'",
   },
