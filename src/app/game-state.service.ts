@@ -30,7 +30,7 @@ export class GameStateService {
 
   /** Returns a URL that includes query parameters to re-generate the current maze. */
   getShareUrl(): string {
-    return `${window.location.origin}/?seed=${this.chooser.seed}`;
+    return `${window.location.origin}${window.location.pathname}?seed=${this.chooser.seed}`;
   }
 
   /** The current maze. */
