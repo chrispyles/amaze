@@ -86,7 +86,8 @@
             "styles": ["src/styles.scss"],
             "scripts": [],
             "browsers": "ChromeHeadless",
-            "codeCoverage": true
+            "codeCoverage": true,
+            "karmaConfig": "karma.conf.js"
           }
         },
         "deploy": {
