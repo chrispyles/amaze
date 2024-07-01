@@ -1,0 +1,16 @@
+:host {
+  border-collapse: collapse;
+  display: block;
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.row {
+  display: flex;
+}
+
+amaze-node {
+  margin: -1px 0 0 -1px;
+}

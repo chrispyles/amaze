@@ -1,1 +1,7 @@
-<p>maze works!</p>
+@for (row of maze().toArray(); track row) {
+  <div class="row">
+    @for (node of row; track node) {
+      <amaze-node [node]="node" [endpoint]="getEndpoint(node)" />
+    }
+  </div>
+}
