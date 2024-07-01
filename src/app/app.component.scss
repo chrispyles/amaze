@@ -10,10 +10,15 @@ $header-padding: 1rem;
 }
 
 header {
+  align-items: center;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   padding: $header-padding;
   position: absolute;
   top: 0;
   width: calc(100% - 2 * $header-padding);
+
+  > div {
+    display: flex;
+  }
 }
