@@ -1,0 +1,63 @@
+$wall: 1px solid var(--border-color);
+$size: 2rem;
+
+:host {
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0);
+  display: flex;
+  height: $size;
+  justify-content: center;
+  position: relative;
+  text-align: center;
+  text-transform: uppercase;
+  width: $size;
+
+  &.up {
+    border-top: $wall;
+  }
+
+  &.right {
+    border-right: $wall;
+  }
+
+  &.down {
+    border-bottom: $wall;
+  }
+
+  &.left {
+    border-left: $wall;
+  }
+
+  span {
+    position: absolute;
+  }
+
+  &.endpoint-edge-up span {
+    top: -95%;
+  }
+
+  &.endpoint-edge-right span {
+    right: -90%;
+  }
+
+  &.endpoint-edge-down span {
+    bottom: -95%;
+  }
+
+  &.endpoint-edge-left span {
+    left: -90%;
+  }
+
+  span.current-position,
+  span.historical-position {
+    background: var(--current-position-color);
+    border-radius: 50%;
+    height: calc($size / 3);
+    inset: calc($size / 2 - $size / 6); // centers the element within the node
+    width: calc($size / 3);
+  }
+
+  span.historical-position {
+    background: var(--path-color);
+  }
+}
