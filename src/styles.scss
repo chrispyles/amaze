@@ -9,12 +9,13 @@ body {
   height: 100%;
 }
 
+// palette: https://chrispyles.io/contrastinator/000000-FF2B2B-F08080-87CEEA-204ED6-FFFFFF
 body {
   --background-color: white;
   --border-color: black;
-  --current-position-color: blue;
+  --current-position-color: #204ed6;
   --hover-color: rgba(0, 0, 0, 0.2);
-  --path-color: skyblue;
+  --path-color: #87ceea;
   --text-color: black;
 
   background: var(--background-color);
@@ -23,9 +24,9 @@ body {
   &.dark-mode {
     --background-color: #060606;
     --border-color: white;
-    --current-position-color: red;
+    --current-position-color: #ff2b2b;
     --hover-color: rgba(255, 255, 255, 0.2);
-    --path-color: lightcoral;
+    --path-color: #f08080;
     --text-color: white;
   }
 }
