@@ -4,6 +4,7 @@ import { corrupt } from 'exhaustive';
 import { type Node, Dir, ALL_DIRS } from '../../lib';
 import { GameStateService } from '../game-state.service';
 
+/** A component representing a node in the maze. */
 @Component({
   selector: 'amaze-node',
   standalone: true,
@@ -25,14 +26,18 @@ import { GameStateService } from '../game-state.service';
 export class NodeComponent {
   readonly gameStateService = inject(GameStateService);
 
+  /** The node. */
   readonly node = input.required<Node>();
 
+  /** The endpoint type, if this node is an endpoint. */
   readonly endpoint = input<'start' | 'end' | undefined>(undefined);
 
+  /** Whether this node is in the game's path. */
   readonly inPath = computed(() =>
     this.gameStateService.path().includes(this.node()),
   );
 
+  /** Classes for the host component. */
   readonly classes = computed(() => {
     const node = this.node();
     let cs = [];
@@ -48,6 +53,7 @@ export class NodeComponent {
     return cs.join(' ');
   });
 
+  /** Icon text to display inside the component, if it is an endpoint. */
   readonly icon = computed(() => {
     if (!this.endpoint()) return '';
     const edge = getMazeEdge(this.node());
@@ -67,6 +73,7 @@ export class NodeComponent {
   });
 }
 
+/** Converts a {@link Dir} to a CSS class. */
 function wallClass(dir: Dir): string {
   switch (dir) {
     case Dir.U:
@@ -82,6 +89,10 @@ function wallClass(dir: Dir): string {
   }
 }
 
+/**
+ * Returns the {@link Dir} corresponding to which edge of the maze the provided node is on. If it is
+ * not on an edge, an error is thrown.
+ */
 function getMazeEdge(node: Node): Dir {
   if (node.i === 0) return Dir.U;
   else if (node.j === node.size - 1) return Dir.R;

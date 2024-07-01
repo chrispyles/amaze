@@ -4,7 +4,6 @@ import { type Chooser } from './chooser';
 import { Coordinates, Node } from './node';
 import { ALL_DIRS, Dir } from './shared';
 import { corrupt } from 'exhaustive';
-import { type RandomGenerator } from 'pure-rand';
 
 /** A maze, represented as a undirected tree of {@link Node}s. */
 export class Maze {
@@ -102,6 +101,7 @@ export class Maze {
     return this.getNode(coords);
   }
 
+  /** Returns the node with the specified coordinates. */
   getNode(coords: Coordinates): Node {
     return this.nodes.get(Node.getKey(coords))!;
   }

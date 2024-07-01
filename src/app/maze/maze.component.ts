@@ -2,17 +2,16 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
   inject,
   input,
-  OnInit,
+  OnDestroy,
   output,
 } from '@angular/core';
 
-import { GameStateService } from '../game-state.service';
 import { NodeComponent } from '../node/node.component';
 import { Dir, Maze, type Node } from '../../lib';
 
+/** A component representing the maze. */
 @Component({
   selector: 'amaze-maze',
   standalone: true,
@@ -23,24 +22,36 @@ import { Dir, Maze, type Node } from '../../lib';
     '[attr.tabindex]': '0',
   },
 })
-export class MazeComponent implements AfterViewInit {
+export class MazeComponent implements AfterViewInit, OnDestroy {
   readonly elementRef = inject(ElementRef);
 
+  /** The maze. */
   readonly maze = input.required<Maze>();
 
+  /** Emits a direction when the user moves. */
   readonly move = output<Dir>();
 
+  /** The last keydown event listener added to the body, for cleanup. */
   static eventListener?: (evt: KeyboardEvent) => void;
 
   ngAfterViewInit(): void {
-    // this.elementRef.nativeElement.focus();
-    if (MazeComponent.eventListener) {
-      document.body.removeEventListener('keydown', MazeComponent.eventListener);
-    }
+    this.cleanupEventListener();
     MazeComponent.eventListener = (evt) => this.handleKeypress(evt);
     document.body.addEventListener('keydown', MazeComponent.eventListener);
   }
 
+  ngOnDestroy(): void {
+    this.cleanupEventListener();
+  }
+
+  /** Cleans up the body keydown event listener, if there is one. */
+  private cleanupEventListener(): void {
+    if (MazeComponent.eventListener) {
+      document.body.removeEventListener('keydown', MazeComponent.eventListener);
+    }
+  }
+
+  /** Handle a keydown event to move the current position. */
   handleKeypress(evt: KeyboardEvent) {
     const arrowDir = keyToDir(evt.key);
     if (arrowDir === undefined) {
@@ -50,6 +61,7 @@ export class MazeComponent implements AfterViewInit {
     this.move.emit(arrowDir);
   }
 
+  /** Returns the endpoint type of the provided node, or undefined if it is not an endpoint. */
   getEndpoint(node: Node) {
     if (this.maze().start.equals(node)) {
       return 'start';
@@ -60,6 +72,7 @@ export class MazeComponent implements AfterViewInit {
   }
 }
 
+/** Converts a KeyboardEvent key to a {@link Dir}. Supports arrow keys and WASD. */
 function keyToDir(key: string): Dir | undefined {
   switch (key) {
     case 'ArrowUp':

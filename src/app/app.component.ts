@@ -7,6 +7,7 @@ import { LogoComponent } from './logo/logo.component';
 
 const DARK_MODE_CLASS = 'dark-mode';
 
+/** The root component for the app. */
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -17,6 +18,7 @@ const DARK_MODE_CLASS = 'dark-mode';
 export class AppComponent implements OnInit {
   readonly gameStateService = inject(GameStateService);
 
+  /** The size of the maze, defined as the number of rows/columns in the maze. */
   size = 20;
 
   ngOnInit(): void {
@@ -37,30 +39,36 @@ export class AppComponent implements OnInit {
     this.generateNewMaze(seed);
   }
 
+  /** The game's maze. */
   get maze(): Maze {
     return this.gameStateService.maze;
   }
 
+  /** Generate a new maze, optionally with the specified seed. */
   generateNewMaze(seed?: number) {
     this.gameStateService.reset(this.size, seed);
   }
 
+  /** The icon to use in the toggle dark mode button. */
   get themeModeIcon(): string {
     return document.body.classList.contains(DARK_MODE_CLASS)
       ? 'light_mode'
       : 'dark_mode';
   }
 
+  /** Toggles dark mode. */
   toggleDarkMode() {
     document.body.classList.toggle(DARK_MODE_CLASS);
   }
 
+  /** Copies a URL to the current maze to the clipboard. */
   shareMaze() {
     const url = this.gameStateService.getShareUrl();
     navigator.clipboard.writeText(url);
     alert('URL copied to clipboard'); // TODO: snackbar?
   }
 
+  /** Handles a move by the user. */
   handleMove(dir: Dir): void {
     this.gameStateService.move(dir);
   }
