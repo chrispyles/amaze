@@ -1,7 +1,8 @@
 import { cache } from 'decorator-cache-getter';
 import { corrupt } from 'exhaustive';
 
-import { ALL_DIRS, choose, Dir } from './shared';
+import { ALL_DIRS, Dir } from './shared';
+import { type Chooser } from './chooser';
 
 /** The coordinates of a node (indices into a 2D array). */
 export type Coordinates = [number, number];
@@ -15,6 +16,7 @@ export class Node {
     readonly i: number,
     readonly j: number,
     readonly size: number,
+    private readonly chooser: Chooser,
   ) {}
 
   /** Returns the node key for the provided node coordinates. */
@@ -88,7 +90,11 @@ export class Node {
     if (possibleNeighbors.length === 0) {
       return undefined;
     }
-    return new Node(...choose(possibleNeighbors), this.size);
+    return new Node(
+      ...this.chooser.choose(possibleNeighbors),
+      this.size,
+      this.chooser,
+    );
   }
 
   /**

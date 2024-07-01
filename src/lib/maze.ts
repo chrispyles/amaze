@@ -1,8 +1,10 @@
 import { cache } from 'decorator-cache-getter';
 
+import { type Chooser } from './chooser';
 import { Coordinates, Node } from './node';
-import { ALL_DIRS, choose, Dir } from './shared';
+import { ALL_DIRS, Dir } from './shared';
 import { corrupt } from 'exhaustive';
+import { type RandomGenerator } from 'pure-rand';
 
 /** A maze, represented as a undirected tree of {@link Node}s. */
 export class Maze {
@@ -18,7 +20,12 @@ export class Maze {
   /** The ending node of the maze. */
   end!: Node;
 
-  constructor(readonly size: number) {
+  private nodeArray?: readonly Node[][];
+
+  constructor(
+    readonly size: number,
+    private readonly chooser: Chooser,
+  ) {
     this.init();
   }
 
@@ -34,7 +41,12 @@ export class Maze {
    * starting and ending nodes of the maze.
    */
   private init(): void {
-    let node = new Node(choose(this.indices), choose(this.indices), this.size);
+    let node = new Node(
+      this.chooser.choose(this.indices),
+      this.chooser.choose(this.indices),
+      this.size,
+      this.chooser,
+    );
     this.dfsStart = node;
     this.nodes.set(node.key, node);
 
@@ -68,8 +80,8 @@ export class Maze {
 
   /** Chooses a single node on the edge of the maze at random. */
   private chooseSingleEndpoint(): Node {
-    const edge = choose(ALL_DIRS);
-    const other = choose(this.indices);
+    const edge = this.chooser.choose(ALL_DIRS);
+    const other = this.chooser.choose(this.indices);
     let coords: Coordinates;
     switch (edge) {
       case Dir.U:
@@ -87,18 +99,28 @@ export class Maze {
       default:
         corrupt(edge);
     }
+    return this.getNode(coords);
+  }
+
+  getNode(coords: Coordinates): Node {
     return this.nodes.get(Node.getKey(coords))!;
   }
 
-  /**
-   * Returns a generator overall nodes in the maze, ordered by their coordinates in ascending
-   * order.
-   */
-  *[Symbol.iterator](): Generator<Node> {
+  /** Returns a the maze as a 2D array of nodes. */
+  toArray(): readonly Node[][] {
+    if (this.nodeArray) return this.nodeArray;
+
+    const arr: Node[][] = [];
     for (let i = 0; i < this.size; i++) {
+      const row: Node[] = [];
       for (let j = 0; j < this.size; j++) {
-        yield this.nodes.get(Node.getKey([i, j]))!;
+        const node = this.getNode([i, j]);
+        row.push(node);
       }
+      arr.push(row);
     }
+
+    this.nodeArray = arr;
+    return arr;
   }
 }
