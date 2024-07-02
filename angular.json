@@ -87,7 +87,8 @@
             "scripts": [],
             "browsers": "ChromeHeadless",
             "codeCoverage": true,
-            "karmaConfig": "karma.conf.js"
+            "karmaConfig": "karma.conf.js",
+            "codeCoverageExclude": ["src/testing/**/*"]
           }
         },
         "deploy": {
