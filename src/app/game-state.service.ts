@@ -108,6 +108,8 @@ export class GameStateService {
     animateFrame();
     // TODO: display the solved maze differently than the user's solution.
   }
+
+  TEST_ONLY = { getChooser: () => this.chooser };
 }
 
 /** Creates an INSECURE PRNG seed from the current time. */
