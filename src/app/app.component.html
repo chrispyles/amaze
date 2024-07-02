@@ -49,7 +49,14 @@
   </div>
 </header>
 
-<amaze-maze [maze]="maze" (move)="handleMove($event)" />
+@if (viewportTooSmall()) {
+  <div data-test-id="viewport-size-error">
+    This browser's dimensions are too small for this application. Please view it
+    in a desktop browser.
+  </div>
+} @else {
+  <amaze-maze [maze]="maze" (move)="handleMove($event)" />
+}
 
 <div class="snack-bar" [class.visible]="snackBarText()">
   {{ snackBarText() }}

@@ -42,6 +42,9 @@ export class AppComponent implements OnInit {
   /** Text to show in the snack bar. */
   readonly snackBarText = signal<string | undefined>(undefined);
 
+  /** Whether the viewport is too small to use the app. */
+  viewportTooSmall = signal(false);
+
   ngOnInit(): void {
     // Set dark mode if user's OS is using it.
     if (
@@ -58,6 +61,17 @@ export class AppComponent implements OnInit {
       this.window.history.pushState({}, '', this.window.location.origin);
     }
     this.generateNewMaze(seed);
+
+    this.checkViewportSize();
+    this.window.addEventListener('resize', () => this.checkViewportSize());
+  }
+
+  checkViewportSize(): void {
+    if (this.window.innerWidth < 1000 || this.window.innerHeight < 850) {
+      this.viewportTooSmall.set(true);
+    } else {
+      this.viewportTooSmall.set(false);
+    }
   }
 
   /** The color to use for the icons in the header. */

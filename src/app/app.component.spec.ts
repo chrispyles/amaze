@@ -12,6 +12,8 @@ describe('AppComponent', () => {
   let gameStateService: jasmine.SpyObj<GameStateService>;
   let windowSpy: jasmine.SpyObj<Window>;
   let clipboardWriteSpy: jasmine.Spy;
+  let createComponent = true;
+  let testBed: TestBed;
   let fixture: ComponentFixture<AppComponent>;
 
   const setInAnimation = () => {
@@ -22,7 +24,6 @@ describe('AppComponent', () => {
   };
 
   beforeAll(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10_000;
     jasmine.clock().install();
   });
 
@@ -46,18 +47,24 @@ describe('AppComponent', () => {
       'http://example.com/?seed=321',
     );
 
-    windowSpy = jasmine.createSpyObj('Window', ['matchMedia'], {
-      history: { pushState: jasmine.createSpy() },
-      location: {
-        origin: 'http://example.com',
-        toString: () => 'http://example.com/?seed=123',
+    windowSpy = jasmine.createSpyObj(
+      'Window',
+      ['addEventListener', 'matchMedia'],
+      {
+        history: { pushState: jasmine.createSpy() },
+        innerHeight: 850,
+        innerWidth: 1000,
+        location: {
+          origin: 'http://example.com',
+          toString: () => 'http://example.com/?seed=123',
+        },
       },
-    });
+    );
     windowSpy.matchMedia.and.returnValue({ matches: false } as MediaQueryList);
 
     clipboardWriteSpy = spyOn(navigator.clipboard, 'writeText');
 
-    await TestBed.configureTestingModule({
+    testBed = TestBed.configureTestingModule({
       imports: [AppComponent],
       providers: [
         { provide: GameStateService, useValue: gameStateService },
@@ -66,9 +73,12 @@ describe('AppComponent', () => {
           useValue: windowSpy,
         },
       ],
-    }).compileComponents();
+    });
 
-    fixture = TestBed.createComponent(AppComponent);
+    if (createComponent) {
+      await testBed.compileComponents();
+      fixture = TestBed.createComponent(AppComponent);
+    }
   });
 
   afterEach(() => {
@@ -231,6 +241,56 @@ describe('AppComponent', () => {
           .classList.contains('visible'),
       ).toBeFalse();
       done();
+    });
+  });
+
+  describe('viewport size error', () => {
+    beforeAll(() => {
+      createComponent = false;
+    });
+
+    afterAll(() => {
+      createComponent = true;
+    });
+
+    it('should display a message if the viewport is too short', async () => {
+      (
+        Object.getOwnPropertyDescriptor(windowSpy, 'innerHeight')
+          ?.get as jasmine.Spy
+      ).and.returnValue(849);
+
+      await testBed.compileComponents();
+      fixture = TestBed.createComponent(AppComponent);
+      fixture.detectChanges();
+
+      expect(
+        document
+          .querySelector('[data-test-id="viewport-size-error"]')
+          ?.textContent?.trim(),
+      ).toBe(
+        "This browser's dimensions are too small for this application. Please view it in a desktop browser.",
+      );
+      expect(document.querySelector('amaze-maze')).toBeNull();
+    });
+
+    it('should display a message if the viewport is too narrow', async () => {
+      (
+        Object.getOwnPropertyDescriptor(windowSpy, 'innerWidth')
+          ?.get as jasmine.Spy
+      ).and.returnValue(999);
+
+      await testBed.compileComponents();
+      fixture = TestBed.createComponent(AppComponent);
+      fixture.detectChanges();
+
+      expect(
+        document
+          .querySelector('[data-test-id="viewport-size-error"]')
+          ?.textContent?.trim(),
+      ).toBe(
+        "This browser's dimensions are too small for this application. Please view it in a desktop browser.",
+      );
+      expect(document.querySelector('amaze-maze')).toBeNull();
     });
   });
 });
