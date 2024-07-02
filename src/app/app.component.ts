@@ -10,6 +10,7 @@ import { MazeComponent } from './maze/maze.component';
 import { GameStateService } from './game-state.service';
 import { Dir, type Maze } from '../lib';
 import { LogoComponent } from './logo/logo.component';
+import { GitHubLogoComponent } from './svgs/github-logo.compontent';
 
 const DARK_MODE_CLASS = 'dark-mode';
 
@@ -22,7 +23,7 @@ export const WINDOW_TOKEN = new InjectionToken('window', {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [LogoComponent, MazeComponent],
+  imports: [GitHubLogoComponent, LogoComponent, MazeComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -53,8 +54,8 @@ export class AppComponent implements OnInit {
     this.generateNewMaze(seed);
   }
 
-  /** The color to use for the logo in the header. */
-  get logoColor() {
+  /** The color to use for the icons in the header. */
+  get iconColor() {
     return this.darkModeEnabled ? 'white' : 'black';
   }
 
