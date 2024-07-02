@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  InjectionToken,
   OnInit,
 } from '@angular/core';
 
@@ -11,6 +12,11 @@ import { Dir, type Maze } from '../lib';
 import { LogoComponent } from './logo/logo.component';
 
 const DARK_MODE_CLASS = 'dark-mode';
+
+/** An injection token for the global window object, to allow overriding in tests. */
+export const WINDOW_TOKEN = new InjectionToken('window', {
+  factory: () => window,
+});
 
 /** The root component for the app. */
 @Component({
@@ -22,7 +28,9 @@ const DARK_MODE_CLASS = 'dark-mode';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  readonly gameStateService = inject(GameStateService);
+  private readonly gameStateService = inject(GameStateService);
+
+  private readonly window = inject(WINDOW_TOKEN);
 
   /** The size of the maze, defined as the number of rows/columns in the maze. */
   size = 20;
@@ -30,17 +38,17 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     // Set dark mode if user's OS is using it.
     if (
-      window.matchMedia &&
-      window.matchMedia('(prefers-color-scheme: dark)').matches
+      this.window.matchMedia &&
+      this.window.matchMedia('(prefers-color-scheme: dark)').matches
     ) {
       document.body.classList.add(DARK_MODE_CLASS);
     }
 
-    const url = new URL(window.location.toString());
+    const url = new URL(this.window.location.toString());
     let seed: number | undefined;
     if (url.searchParams.has('seed')) {
       seed = Number(url.searchParams.get('seed'));
-      window.history.pushState({}, '', window.location.origin);
+      this.window.history.pushState({}, '', this.window.location.origin);
     }
     this.generateNewMaze(seed);
   }

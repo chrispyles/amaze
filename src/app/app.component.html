@@ -6,6 +6,7 @@
       class="material-symbols icon-button"
       title="Solve the maze"
       (click)="solveMaze()"
+      data-test-id="solve-maze-button"
     >
       conversion_path
     </button>
@@ -14,6 +15,7 @@
       class="material-symbols icon-button"
       title="Generate a new maze"
       (click)="generateNewMaze()"
+      data-test-id="generate-maze-button"
     >
       refresh
     </button>
@@ -22,6 +24,7 @@
       class="material-symbols icon-button"
       title="Toggle light/dark mode"
       (click)="toggleDarkMode()"
+      data-test-id="toggle-dark-mode-button"
     >
       {{ themeModeIcon }}
     </button>
@@ -30,6 +33,7 @@
       class="material-symbols icon-button"
       title="Share this maze"
       (click)="shareMaze()"
+      data-test-id="share-maze-button"
     >
       share
     </button>
