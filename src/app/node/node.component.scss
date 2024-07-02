@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 $wall: 1px solid var(--border-color);
 $size: 2rem;
 
@@ -12,40 +14,27 @@ $size: 2rem;
   text-transform: uppercase;
   width: $size;
 
-  &.up {
-    border-top: $wall;
-  }
+  @each $class,
+    $dir in ('up': 'top', 'right': 'right', 'down': 'bottom', 'left': 'left')
+  {
+    // Set a border in the direction indicated by the class.
+    &.#{$class} {
+      border-#{$dir}: $wall;
+    }
 
-  &.right {
-    border-right: $wall;
-  }
-
-  &.down {
-    border-bottom: $wall;
-  }
-
-  &.left {
-    border-left: $wall;
+    // Move the span's text content outside of the element in the direction indicated by which edge
+    // it's on, so that the endpoint arrows are rendered outside the maze edge.
+    &.endpoint-edge-#{$class} span {
+      @if list.index(('top', 'bottom'), $dir) {
+        #{$dir}: -95%;
+      } @else {
+        #{$dir}: -90%;
+      }
+    }
   }
 
   span {
     position: absolute;
-  }
-
-  &.endpoint-edge-up span {
-    top: -95%;
-  }
-
-  &.endpoint-edge-right span {
-    right: -90%;
-  }
-
-  &.endpoint-edge-down span {
-    bottom: -95%;
-  }
-
-  &.endpoint-edge-left span {
-    left: -90%;
   }
 
   span.current-position,
