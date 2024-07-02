@@ -4,6 +4,8 @@ import {
   inject,
   InjectionToken,
   OnInit,
+  signal,
+  ElementRef,
 } from '@angular/core';
 
 import { MazeComponent } from './maze/maze.component';
@@ -29,12 +31,16 @@ export const WINDOW_TOKEN = new InjectionToken('window', {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
+  private readonly elementRef = inject(ElementRef);
   private readonly gameStateService = inject(GameStateService);
 
   private readonly window = inject(WINDOW_TOKEN);
 
   /** The size of the maze, defined as the number of rows/columns in the maze. */
   size = 20;
+
+  /** Text to show in the snack bar. */
+  readonly snackBarText = signal<string | undefined>(undefined);
 
   ngOnInit(): void {
     // Set dark mode if user's OS is using it.
@@ -94,12 +100,24 @@ export class AppComponent implements OnInit {
   shareMaze(): void {
     const url = this.gameStateService.getShareUrl();
     navigator.clipboard.writeText(url);
-    alert('URL copied to clipboard'); // TODO: snackbar?
+    this.snackBarText.set('URL copied to clipboard');
+    setTimeout(() => this.closeSnackBar(), 2000);
   }
 
   /** Handles a move by the user. */
   handleMove(dir: Dir): void {
     if (this.gameStateService.inAnimation) return;
     this.gameStateService.move(dir);
+  }
+
+  private closeSnackBar(): void {
+    // Set the opacity to 0 so the snack bar fades away before removing its text.
+    this.elementRef.nativeElement.querySelector('.snack-bar').style.opacity =
+      '0';
+    setTimeout(() => {
+      this.snackBarText.set(undefined);
+      this.elementRef.nativeElement.querySelector('.snack-bar').style.opacity =
+        '';
+    }, 1000);
   }
 }

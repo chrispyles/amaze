@@ -14,6 +14,10 @@ describe('GameStateService', () => {
     clock.install();
   });
 
+  afterAll(() => {
+    clock.uninstall();
+  });
+
   beforeEach(() => {
     TestBed.configureTestingModule({});
     service = TestBed.inject(GameStateService);

@@ -50,3 +50,7 @@
 </header>
 
 <amaze-maze [maze]="maze" (move)="handleMove($event)" />
+
+<div class="snack-bar" [class.visible]="snackBarText()">
+  {{ snackBarText() }}
+</div>

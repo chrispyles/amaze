@@ -21,6 +21,15 @@ describe('AppComponent', () => {
     ).and.returnValue(true);
   };
 
+  beforeAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10_000;
+    jasmine.clock().install();
+  });
+
+  afterAll(() => {
+    jasmine.clock().uninstall();
+  });
+
   beforeEach(async () => {
     const maze = new Maze(4, new Chooser(42));
     gameStateService = jasmine.createSpyObj<GameStateService>(
@@ -189,6 +198,39 @@ describe('AppComponent', () => {
       expect(clipboardWriteSpy).toHaveBeenCalledWith(
         'http://example.com/?seed=321',
       );
+    });
+
+    it('should show a snack bar confirming that the URL was copied', (done) => {
+      fixture.debugElement
+        .query(By.css('[data-test-id="share-maze-button"]'))
+        .nativeElement.click();
+      fixture.detectChanges();
+
+      expect(
+        fixture.nativeElement.querySelector('.snack-bar').textContent.trim(),
+      ).toBe('URL copied to clipboard');
+      expect(
+        fixture.nativeElement
+          .querySelector('.snack-bar')
+          .classList.contains('visible'),
+      ).toBeTrue();
+
+      // check that the snackbar is hidden after 2s and emptied after 3s
+
+      jasmine.clock().tick(2000);
+      fixture.detectChanges();
+      expect(
+        fixture.nativeElement.querySelector('.snack-bar').style.opacity,
+      ).toBe('0');
+
+      jasmine.clock().tick(1000);
+      fixture.detectChanges();
+      expect(
+        fixture.nativeElement
+          .querySelector('.snack-bar')
+          .classList.contains('visible'),
+      ).toBeFalse();
+      done();
     });
   });
 });

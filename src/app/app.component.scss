@@ -22,3 +22,17 @@ header {
     display: flex;
   }
 }
+
+.snack-bar {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  bottom: 2rem;
+  opacity: 0;
+  padding: 1rem;
+  position: absolute;
+  transition: opacity 0.25s;
+
+  &.visible {
+    opacity: 1;
+  }
+}
