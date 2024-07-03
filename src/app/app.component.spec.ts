@@ -164,6 +164,38 @@ describe('AppComponent', () => {
     });
   });
 
+  describe('help dialog', () => {
+    const openDialog = () =>
+      fixture.debugElement
+        .query(By.css('[data-test-id="help-dialog-button"]'))
+        .nativeElement.click();
+
+    const getDialog = () =>
+      fixture.debugElement.query(By.css('dialog'))
+        .nativeElement as HTMLDialogElement;
+
+    beforeEach(() => {
+      fixture.detectChanges();
+    });
+
+    it('should be opened by the help dialog button', () => {
+      openDialog();
+      expect(getDialog().open).toBeTrue();
+    });
+
+    it('should be closed by its close button', () => {
+      openDialog();
+      getDialog().querySelector('button')?.click();
+      expect(getDialog().open).toBeFalse();
+    });
+
+    it('should be closed by clicking outside of the dialog', () => {
+      openDialog();
+      (document.elementFromPoint(0, 0)! as HTMLElement).click();
+      expect(getDialog().open).toBeFalse();
+    });
+  });
+
   describe('solve maze button', () => {
     it('should use the GameStateService to solve the maze with an animation', () => {
       fixture.debugElement

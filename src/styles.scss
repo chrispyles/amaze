@@ -15,6 +15,7 @@ body {
   --background-color: white;
   --border-color: black;
   --current-position-color: #204ed6;
+  --dialog-background-color: #fffffff0;
   --hover-color: rgba(0, 0, 0, 0.2);
   --path-color: #87ceea;
   --text-color: black;
@@ -27,6 +28,7 @@ body {
     --background-color: #060606;
     --border-color: white;
     --current-position-color: #ff2b2b;
+    --dialog-background-color: #000000f0;
     --hover-color: rgba(255, 255, 255, 0.2);
     --path-color: #f08080;
     --text-color: white;
@@ -55,6 +57,11 @@ a {
     padding: 0;
     width: 2.5rem;
   }
+}
+
+i {
+  font-style: normal;
+  vertical-align: bottom;
 }
 
 .material-symbols {

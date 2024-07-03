@@ -4,6 +4,15 @@
   <div>
     <button
       class="material-symbols icon-button"
+      title="Instructions"
+      (click)="showHelpDialog()"
+      data-test-id="help-dialog-button"
+    >
+      help
+    </button>
+
+    <button
+      class="material-symbols icon-button"
       title="Solve the maze"
       (click)="solveMaze()"
       data-test-id="solve-maze-button"
@@ -61,3 +70,24 @@
 <div class="snack-bar" [class.visible]="snackBarText()">
   {{ snackBarText() }}
 </div>
+
+<dialog #helpDialog (click)="closeHelpDialog($event)">
+  <div class="dialog-header">
+    <h2>Instructions</h2>
+    <button class="material-symbols icon-button" (click)="helpDialog.close()">
+      close
+    </button>
+  </div>
+
+  <p>Use your arrow or WASD keys to move through the maze.</p>
+
+  <p>
+    Click the <i class="material-symbols">conversion_path</i> button to solve
+    the maze.
+  </p>
+
+  <p>
+    Click the <i class="material-symbols">refresh</i> button to generate a new
+    maze.
+  </p>
+</dialog>

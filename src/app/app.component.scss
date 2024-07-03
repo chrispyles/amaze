@@ -40,3 +40,31 @@ header {
     opacity: 1;
   }
 }
+
+dialog {
+  background: var(--dialog-background-color);
+  color: inherit;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 40%;
+
+  &::backdrop {
+    background: #000;
+    opacity: 0.3;
+
+    ::ng-deep .dark-mode & {
+      opacity: 0.8;
+    }
+  }
+
+  .dialog-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  p {
+    margin: 1rem 0;
+  }
+}

@@ -7,6 +7,7 @@ import {
   signal,
   ElementRef,
   effect,
+  ViewChild,
 } from '@angular/core';
 
 import { MazeComponent } from './maze/maze.component';
@@ -50,6 +51,8 @@ export class AppComponent implements OnInit {
 
   /** Whether the viewport is too small to use the app. */
   viewportTooSmall = signal(false);
+
+  @ViewChild('helpDialog') readonly helpDialog!: ElementRef<HTMLDialogElement>;
 
   constructor() {
     // When the user reaches the end of the maze, show a confetti animation.
@@ -102,6 +105,27 @@ export class AppComponent implements OnInit {
   /** The game's maze. */
   get maze(): Maze {
     return this.gameStateService.maze;
+  }
+
+  /** Show the help dialog. */
+  showHelpDialog(): void {
+    this.helpDialog.nativeElement.showModal();
+  }
+
+  /**
+   * Close the dialog if the provided mouse event occurred outside the dialog element's bounding
+   * rect.
+   */
+  closeHelpDialog(evt: MouseEvent): void {
+    const rect = this.helpDialog.nativeElement.getBoundingClientRect();
+
+    const clickedInDialog =
+      rect.top <= evt.clientY &&
+      evt.clientY <= rect.top + rect.height &&
+      rect.left <= evt.clientX &&
+      evt.clientX <= rect.left + rect.width;
+
+    if (!clickedInDialog) this.helpDialog.nativeElement.close();
   }
 
   /** Solves the maze and displays the solution. */
