@@ -12,7 +12,7 @@ import { MazeComponent } from './maze/maze.component';
 import { GameStateService } from './game-state.service';
 import { Dir, type Maze } from '../lib';
 import { LogoComponent } from './logo/logo.component';
-import { GitHubLogoComponent } from './svgs/github-logo.compontent';
+import { GitHubLogoComponent } from './svgs/github-logo.component';
 
 const DARK_MODE_CLASS = 'dark-mode';
 
