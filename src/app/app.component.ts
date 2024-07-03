@@ -42,6 +42,9 @@ export class AppComponent implements OnInit {
   /** The size of the maze, defined as the number of rows/columns in the maze. */
   size = 20;
 
+  /** A seed to use when resetting the maze. */
+  seed?: number;
+
   /** Text to show in the snack bar. */
   readonly snackBarText = signal<string | undefined>(undefined);
 
@@ -70,7 +73,12 @@ export class AppComponent implements OnInit {
     let seed: number | undefined;
     if (url.searchParams.has('seed')) {
       seed = Number(url.searchParams.get('seed'));
-      this.window.history.pushState({}, '', this.window.location.origin);
+      const pinSeed = Boolean(url.searchParams.get('pinseed'));
+      if (pinSeed) {
+        this.seed = seed;
+      } else {
+        this.window.history.pushState({}, '', this.window.location.origin);
+      }
     }
     this.generateNewMaze(seed);
 
@@ -104,7 +112,7 @@ export class AppComponent implements OnInit {
 
   /** Generate a new maze, optionally with the specified seed. */
   generateNewMaze(seed?: number): void {
-    this.gameStateService.reset(this.size, seed);
+    this.gameStateService.reset(this.size, this.seed ?? seed);
   }
 
   /** Whether dark mode is currently enabled. */
