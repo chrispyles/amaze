@@ -6,6 +6,7 @@ import {
   OnInit,
   signal,
   ElementRef,
+  effect,
 } from '@angular/core';
 
 import { MazeComponent } from './maze/maze.component';
@@ -13,6 +14,7 @@ import { GameStateService } from './game-state.service';
 import { Dir, type Maze } from '../lib';
 import { LogoComponent } from './logo/logo.component';
 import { GitHubLogoComponent } from './svgs/github-logo.component';
+import { ConfettiService } from './confetti.service';
 
 const DARK_MODE_CLASS = 'dark-mode';
 
@@ -31,6 +33,7 @@ export const WINDOW_TOKEN = new InjectionToken('window', {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
+  private readonly confettiService = inject(ConfettiService);
   private readonly elementRef = inject(ElementRef);
   private readonly gameStateService = inject(GameStateService);
 
@@ -44,6 +47,15 @@ export class AppComponent implements OnInit {
 
   /** Whether the viewport is too small to use the app. */
   viewportTooSmall = signal(false);
+
+  constructor() {
+    // When the user reaches the end of the maze, show a confetti animation.
+    effect(() => {
+      if (this.maze.end.equals(this.gameStateService.position())) {
+        this.confettiService.start();
+      }
+    });
+  }
 
   ngOnInit(): void {
     // Set dark mode if user's OS is using it.

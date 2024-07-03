@@ -1,17 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { signal, WritableSignal } from '@angular/core';
+import { By } from '@angular/platform-browser';
 
 import { AppComponent, WINDOW_TOKEN } from './app.component';
 import { GameStateService } from './game-state.service';
-import { Chooser, Dir, Maze } from '../lib';
-import { signal } from '@angular/core';
-import { By } from '@angular/platform-browser';
+import { Chooser, Dir, Maze, Node } from '../lib';
 import { LogoComponent } from './logo/logo.component';
 import { MazeComponent } from './maze/maze.component';
+import { ConfettiService } from './confetti.service';
 
 describe('AppComponent', () => {
+  let positionSignal: WritableSignal<Node>;
   let gameStateService: jasmine.SpyObj<GameStateService>;
   let windowSpy: jasmine.SpyObj<Window>;
   let clipboardWriteSpy: jasmine.Spy;
+  let confettiStartSpy: jasmine.Spy;
   let createComponent = true;
   let testBed: TestBed;
   let fixture: ComponentFixture<AppComponent>;
@@ -33,13 +36,14 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     const maze = new Maze(4, new Chooser(42));
+    positionSignal = signal(maze.getNode([0, 0]));
     gameStateService = jasmine.createSpyObj<GameStateService>(
       'GameStateService',
       ['getShareUrl', 'move', 'reset', 'solve'],
       {
         inAnimation: false,
         maze,
-        position: signal(maze.getNode([0, 0])),
+        position: positionSignal,
         path: signal([maze.getNode([0, 0])]),
       },
     );
@@ -74,6 +78,8 @@ describe('AppComponent', () => {
         },
       ],
     });
+
+    confettiStartSpy = spyOn(TestBed.inject(ConfettiService), 'start');
 
     if (createComponent) {
       await testBed.compileComponents();
@@ -149,6 +155,12 @@ describe('AppComponent', () => {
         .query(By.directive(MazeComponent))
         .componentInstance.move.emit(Dir.U);
       expect(gameStateService.move).not.toHaveBeenCalled();
+    });
+
+    it('should show confetti when the endpoint is reached', () => {
+      positionSignal.set(gameStateService.maze.end);
+      fixture.detectChanges();
+      expect(confettiStartSpy).toHaveBeenCalledTimes(1);
     });
   });
 
