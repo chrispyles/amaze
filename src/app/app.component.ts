@@ -90,11 +90,7 @@ export class AppComponent implements OnInit {
   }
 
   checkViewportSize(): void {
-    if (this.window.innerWidth < 1000 || this.window.innerHeight < 850) {
-      this.viewportTooSmall.set(true);
-    } else {
-      this.viewportTooSmall.set(false);
-    }
+    this.viewportTooSmall.set(this.window.innerWidth < 1000 || this.window.innerHeight < 850);
   }
 
   /** The color to use for the icons in the header. */
